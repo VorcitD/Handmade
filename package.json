@@ -4,6 +4,7 @@
   "description": "Projeto em Node.js para a loja Handmade GiRiffarachi",
   "main": "index.js",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "knex": "^0.95.5",
     "node": "^16.1.0",
