@@ -32,14 +32,42 @@ module.exports = {
     },
 
     async update(request, response){
-        const { email, password, name, phone } = request.body;
+        const { id } = request.params;
 
+        const checkUser = await connection('users').where({ id }).first();
+        
+        if(!checkUser){
+            return response.status(400).json({ error: 'User not found.'});
+        }
+
+        const { email, name, phone } = request.body;
+
+        await connection('users').where({ id }).update({
+            email,
+            name,
+            phone,
+        });
+
+        return response.json({
+            message: 'User updated succesfully',
+        })
 
     },
 
     async delete(request, response){
         const { id } = request.params;
 
+        const checkUser = await connection('users').where({ id }).first();
+        
+        if(!checkUser){
+            return response.status(400).json({ error: 'User not found.'});
+        }
+
+        await connection('users').where({ id }).del();
+
+        return response.json({
+            message: 'User deleted succesfuly',
+        })
         
     },
 }
