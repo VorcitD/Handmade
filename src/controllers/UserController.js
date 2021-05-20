@@ -26,7 +26,7 @@ module.exports = {
             phone,
         });
 
-        return response.json({
+        return response.status(200).json({
             message: 'User created succesfully.',
         });
     },
@@ -48,7 +48,7 @@ module.exports = {
             phone,
         });
 
-        return response.json({
+        return response.status(200).json({
             message: 'User updated succesfully',
         })
 
@@ -65,7 +65,7 @@ module.exports = {
 
         await connection('users').where({ id }).del();
 
-        return response.json({
+        return response.status(204).json({
             message: 'User deleted succesfuly',
         })
         
