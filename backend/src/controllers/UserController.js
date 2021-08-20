@@ -1,73 +1,69 @@
 const connection = require('../database/connection');
-const { hash } = require('bcryptjs');
 const CreateUserService = require('../services/CreateUserService');
 
 module.exports = {
-    async index(request, response){
-        const users = await connection('users');
+  async index(request, response) {
+    const users = await connection('users');
 
-        return response.json(users);
-    },
+    return response.json(users);
+  },
 
-    async create(request, response){
-        try{
+  async create(request, response) {
+    try {
+      const {
+        email, password, name, phone,
+      } = request.body;
 
-            const { email, password, name, phone } = request.body;
+      const user = await CreateUserService.execute({
+        email,
+        password,
+        name,
+        phone,
+      });
 
-            const user = await CreateUserService.execute({
-                email,
-                password,
-                name,
-                phone,
-            });
+      delete user.password;
 
-            delete user.password;
-            
-            return response.status(200);
+      return response.status(200);
+    } catch (error) {
+      return response.status(400).json({ message: error.message });
+    }
+  },
 
-        } catch(error){
+  async update(request, response) {
+    const { id } = request.params;
 
-            return response.status(400).json({ message: error.message });
-        }
-    },
+    const checkUser = await connection('users').where({ id }).first();
 
-    async update(request, response){
-        const { id } = request.params;
+    if (!checkUser) {
+      return response.status(400).json({ error: 'User not found.' });
+    }
 
-        const checkUser = await connection('users').where({ id }).first();
-        
-        if(!checkUser){
-            return response.status(400).json({ error: 'User not found.'});
-        }
+    const { email, name, phone } = request.body;
 
-        const { email, name, phone } = request.body;
+    await connection('users').where({ id }).update({
+      email,
+      name,
+      phone,
+    });
 
-        await connection('users').where({ id }).update({
-            email,
-            name,
-            phone,
-        });
+    return response.status(200).json({
+      message: 'User updated succesfully',
+    });
+  },
 
-        return response.status(200).json({
-            message: 'User updated succesfully',
-        })
+  async delete(request, response) {
+    const { id } = request.params;
 
-    },
+    const checkUser = await connection('users').where({ id }).first();
 
-    async delete(request, response){
-        const { id } = request.params;
+    if (!checkUser) {
+      return response.status(400).json({ error: 'User not found.' });
+    }
 
-        const checkUser = await connection('users').where({ id }).first();
-        
-        if(!checkUser){
-            return response.status(400).json({ error: 'User not found.'});
-        }
+    await connection('users').where({ id }).del();
 
-        await connection('users').where({ id }).del();
-
-        return response.status(204).json({
-            message: 'User deleted succesfuly',
-        })
-        
-    },
-}
+    return response.status(204).json({
+      message: 'User deleted succesfuly',
+    });
+  },
+};

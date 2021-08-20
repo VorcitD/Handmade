@@ -9,6 +9,6 @@ const routes = express.Router();
 routes.use('/users', userRouter);
 routes.use('/sessions', sessionRouter);
 routes.use('/clothes', clothesRouter);
-routes.use('/photos',photosRouter);
+routes.use('/photos', photosRouter);
 
 module.exports = routes;
